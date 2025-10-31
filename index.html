@@ -2,637 +2,530 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>三年級數學學習站</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>三年級數學學習網站</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --bg: #f5f7fb;
-      --primary: #3f72ff;
-      --card: #ffffff;
-    }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont; }
     body {
       margin: 0;
-      font-family: "Segoe UI","Noto Sans TC",system-ui;
-      background: var(--bg);
+      background: linear-gradient(160deg,#f5f7fa 0%,#c3cfe2 100%);
       display: flex;
-      min-height: 100vh;
-      color: #1f2937;
+      height: 100vh;
     }
     .sidebar {
-      width: 260px;
+      width: 250px;
       background: #1f2937;
       color: #fff;
-      padding: 1rem 1rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: .75rem;
+      padding: 1rem;
+      overflow-y: auto;
     }
-    .logo { font-weight:700; margin-bottom:.5rem; }
+    .sidebar h2 { margin-top: 0; font-size: 1.2rem; }
     .unit-btn {
-      background: rgba(255,255,255,.05);
+      display: block;
+      width: 100%;
+      background: rgba(255,255,255,0.05);
       border: 1px solid transparent;
-      padding: .6rem .7rem;
-      border-radius: 12px;
-      cursor: pointer;
+      color: #fff;
       text-align: left;
-      transition: .2s;
-      display: flex;
-      gap: .6rem;
-      align-items: center;
+      padding: .6rem .8rem;
+      margin-bottom: .5rem;
+      border-radius: .5rem;
+      cursor: pointer;
+      transition: .15s;
+      font-size: .95rem;
     }
-    .unit-btn small { opacity:.7; font-size:.7rem; display:block; }
-    .unit-btn.active, .unit-btn:hover {
-      background: rgba(255,255,255,.18);
-      border-color: rgba(255,255,255,.13);
-    }
+    .unit-btn:hover, .unit-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+
     .main {
       flex: 1;
-      padding: 1.25rem 1.5rem 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      padding: 1.3rem 1.4rem 1.4rem;
+      overflow-y: auto;
     }
-    .topbar { display:flex; justify-content:space-between; gap:1rem; }
-    .badge {
-      background: rgba(63,114,255,.1);
-      color: #3f72ff;
-      padding: .25rem .5rem;
-      border-radius: 999px;
-      font-size: .7rem;
+    #learning-panel, #question-panel {
+      background: #fff;
+      border-radius: 1rem;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.09);
+      margin-bottom: 1rem;
+      animation: fadein .3s ease;
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .panel-title {
+      font-size: 1.1rem;
       font-weight: 600;
+      margin-bottom: .4rem;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
     }
-    .score-box { background:#fff; border-radius:14px; padding:.75rem .9rem; }
-    .content-area {
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:1rem;
-      align-items:flex-start;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 1rem 1.2rem;
-      box-shadow: 0 10px 25px rgba(15,23,42,.04);
-    }
-    .reading h2 { margin-top:0; }
-    .reading ul { margin:0; padding-left:1.15rem; line-height:1.6; }
-    .btn {
-      background: var(--primary);
+    .panel-sub { color: #6b7280; font-size: .85rem; margin-bottom: .8rem; }
+    ul { padding-left: 1.1rem; }
+    .primary-btn {
+      background: #0ea5e9;
       color: #fff;
       border: none;
-      padding: .55rem 1.1rem;
-      border-radius: 12px;
-      font-weight: 600;
+      padding: .6rem 1.1rem;
+      border-radius: .6rem;
       cursor: pointer;
-      display: inline-flex;
-      gap: .4rem;
-      align-items: center;
+      font-weight: 600;
+      transition: .1s;
     }
-    .question-box {
-      background: #fff7ec;
-      border-radius:14px;
-      padding:.75rem .9rem .85rem;
-      min-height:200px;
+    .primary-btn:hover { background: #0284c7; }
+
+    .question-top {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
     }
-    .question-title { font-weight:700; margin-bottom:.5rem; }
-    .options { display:flex; flex-direction:column; gap:.4rem; }
-    .option {
-      background:#fff;
-      border:1px solid rgba(0,0,0,.05);
-      border-radius:10px;
-      padding:.4rem .5rem;
-      cursor:pointer;
-      transition:.15s;
+    .question-text { flex: 1; }
+    .question-img {
+      width: 180px;
+      min-height: 110px;
+      border-radius: .7rem;
+      background: #e5e7eb;
+      border: 1px dashed #94a3b8;
+      overflow: hidden;
     }
-    .option:hover { border-color:rgba(63,114,255,.4); }
-    .option.correct { background:rgba(63,114,255,.12); border-color:rgba(63,114,255,.4); }
-    .option.wrong { background:rgba(255,95,109,.12); border-color:rgba(255,95,109,.5); }
-    .hint {
-      background:#fff;
-      border-left:5px solid #ff5f6d;
-      padding:.5rem .75rem;
-      border-radius:10px;
-      margin-top:.45rem;
-      font-size:.85rem;
-      display:none;
+    .question-img img {
+      width: 100%;
+      display: block;
     }
-    .progress-wrap { display:flex; align-items:center; gap:.5rem; }
-    .progress-bar { flex:1; background:#e5ecff; height:.55rem; border-radius:9999px; overflow:hidden; }
-    .progress-bar span { display:block; height:100%; background:linear-gradient(90deg,#3f72ff,#7a9dff); width:0%; transition:width .3s; }
-    .img-box { margin-top:.35rem; background:#fff; border-radius:10px; padding:.3rem; text-align:center; display:none; }
-    .inline-svg { width:100%; max-height:180px; object-fit:contain; }
-    .finish { background:#fff; border-radius:12px; text-align:center; padding:1.25rem .75rem; margin-top:.5rem; display:none; }
-    @media(max-width:1000px){ .content-area{grid-template-columns:1fr;} .sidebar{display:none;} }
+
+    .answer-area { margin-top: .9rem; display: flex; gap: .6rem; }
+    .answer-area input {
+      flex: 0 0 140px;
+      padding: .5rem .6rem;
+      border-radius: .5rem;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+    }
+    .hint-box {
+      display: none;
+      margin-top: .8rem;
+      background: #fef9c3;
+      border: 1px solid #facc15;
+      padding: .5rem .75rem;
+      border-radius: .5rem;
+      color: #92400e;
+      font-size: .87rem;
+      line-height: 1.35;
+    }
+    .question-card.shake { animation: shake .25s; }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-4px); }
+      100% { transform: translateX(0); }
+    }
+    .badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: .1rem .4rem;
+      border-radius: .4rem;
+      font-size: .7rem;
+    }
+    .progress {
+      width: 100%;
+      background: #e5e7eb;
+      border-radius: 999px;
+      height: .6rem;
+      margin-bottom: .8rem;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #0f766e);
+      width: 0%;
+      transition: .2s;
+    }
+    .correct-banner {
+      display: none;
+      margin-top: .5rem;
+      background: #dcfce7;
+      border: 1px solid #22c55e;
+      color: #166534;
+      padding: .35rem .6rem;
+      border-radius: .45rem;
+      font-size: .8rem;
+      width: fit-content;
+    }
+    .done-box {
+      text-align: center;
+      padding: 1.5rem 0 .5rem;
+    }
+    .done-box h3 { margin-bottom: .5rem; }
+    .small-muted { font-size: .75rem; color: #94a3b8; margin-top: .4rem; }
   </style>
 </head>
 <body>
   <aside class="sidebar">
-    <div class="logo">📘 數學學習站 v1</div>
-    <div class="unit-btn active" data-unit="line"><div>1. 整數數線與比較大小</div><small>NC-3-11-1</small></div>
-    <div class="unit-btn" data-unit="rectangle"><div>2. 辨認長方形</div><small>SC-3-2-2</small></div>
-    <div class="unit-btn" data-unit="circle"><div>3. 認識圓心、半徑、直徑</div><small>SC-3-3-1</small></div>
-    <div class="unit-btn" data-unit="weight1"><div>4. 公斤、公克與換算</div><small>NC-3-16-1</small></div>
-    <div class="unit-btn" data-unit="weight2"><div>5. 複名數加減(不進退位)</div><small>NC-3-16-2</small></div>
+    <h2>數學學習網站</h2>
+    <button class="unit-btn active" data-unit="u1">單元1 直式乘法</button>
+    <button class="unit-btn" data-unit="u2">單元2 除法分裝/平分</button>
+    <button class="unit-btn" data-unit="u3">單元3 分數的認識</button>
+    <button class="unit-btn" data-unit="u4">單元4 先算後除</button>
+    <button class="unit-btn" data-unit="u5">單元5 連乘問題</button>
+    <button class="unit-btn" data-unit="u6">單元6 加減估算</button>
+    <button class="unit-btn" data-unit="u7">單元7 長度換算</button>
   </aside>
-
   <main class="main">
-    <div class="topbar">
-      <div>
-        <div class="badge" id="unit-code">NC-3-11-1</div>
-        <h1 id="unit-title" style="margin:.2rem 0 0;">整數數線與比較大小</h1>
-        <p id="unit-desc" style="margin:.1rem 0 0;color:#6b7280;font-size:.9rem;">先認識數線的刻度與方向，再練習「往右是加、往左是減」，最後比較兩個數的大小。</p>
-      </div>
-      <div class="score-box">
-        <div style="font-size:.8rem;color:#6b7280">本單元得分</div>
-        <div style="font-size:1.6rem;font-weight:700;" id="score">0 / 8</div>
-      </div>
-    </div>
-
-    <div class="content-area">
-      <div class="card reading" id="reading-box">
-        <h2>學習重點</h2>
-        <ul id="reading-content"></ul>
-        <button class="btn" id="next-to-quiz" style="margin-top:.8rem;">我看完了，開始答題 ➜</button>
-      </div>
-
-      <div class="card">
-        <div class="progress-wrap">
-          <div style="font-size:.8rem;">題目進度</div>
-          <div class="progress-bar"><span id="progress-bar"></span></div>
-          <div id="q-counter" style="font-size:.8rem;">0 / 8</div>
-        </div>
-        <div class="question-box" id="question-box">
-          <div class="question-title" id="question-title">請先看左邊的學習重點喔 👈</div>
-          <div class="img-box" id="img-box"></div>
-          <div class="options" id="options"></div>
-          <div class="hint" id="hint-box">
-            <strong>提示</strong>
-            <span id="hint-content"></span>
-          </div>
-        </div>
-        <div class="finish" id="finish-box">
-          <h3>🎉 太棒了！你完成這個單元了！</h3>
-          <p>可以回左邊換下一個單元，或再玩一次本單元。</p>
-          <button class="btn" id="restart-unit">再玩一次</button>
-        </div>
-      </div>
-    </div>
+    <section id="learning-panel"></section>
+    <section id="question-panel" style="display:none;"></section>
   </main>
 
   <script>
-    /* 題庫維持上一版的內容（含你剛說的 weight1 第三題改成 55g），這裡略，同樣五個單元都在 */
-    const UNIT_DATA = {
-      line: {
-        code: "NC-3-11-1",
-        title: "整數數線與比較大小",
-        desc: "數線上往右數是變大、往左數是變小；也能用「終點 − 起點」算距離。",
-        reading: [
-          "1. 數線最左邊的刻度是 0，往右每一格代表 1。",
-          "2. 往右移動可以想成「加法」，往左移動可以想成「減法」。",
-          "3. 比大小：在右邊的數比較大；在左邊的數比較小。",
-          "4. 兩個點的距離 = 右邊的數 − 左邊的數。"
-        ],
+    /* 先做一個小小的 SVG 產生器，給不同單元不同顏色＋標題 */
+    function svgDataUri(label, desc, color) {
+      const svg =
+        `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'>
+          <rect width='300' height='180' rx='18' ry='18' fill='${color}'/>
+          <text x='16' y='42' font-family='sans-serif' font-size='20' fill='#ffffff' font-weight='600'>${label}</text>
+          <text x='16' y='90' font-family='sans-serif' font-size='14' fill='#ffffff'>${desc}</text>
+          <circle cx='250' cy='140' r='20' fill='rgba(255,255,255,.25)'/>
+        </svg>`;
+      return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+    }
+
+    const IMG = {
+      // 單元1
+      u1q1: svgDataUri("單元1 題1","23元×3本", "#38bdf8"),
+      u1q2: svgDataUri("單元1 題2","14元×6盒", "#38bdf8"),
+      u1q3: svgDataUri("單元1 題3","92元×4本", "#38bdf8"),
+      u1q4: svgDataUri("單元1 題4","78元×6盒", "#38bdf8"),
+      u1q5: svgDataUri("單元1 題5","54×8", "#38bdf8"),
+      u1q6: svgDataUri("單元1 題6","35×6", "#38bdf8"),
+      u1q7: svgDataUri("單元1 題7","245×3", "#38bdf8"),
+      u1q8: svgDataUri("單元1 題8","398×7", "#38bdf8"),
+      // 單元2
+      u2q1: svgDataUri("單元2 題1","18 顆÷3 顆", "#f97316"),
+      u2q2: svgDataUri("單元2 題2","20 支÷4 人", "#f97316"),
+      u2q3: svgDataUri("單元2 題3","25 顆÷4 顆", "#f97316"),
+      u2q4: svgDataUri("單元2 題4","27 支÷5 人", "#f97316"),
+      u2q5: svgDataUri("單元2 題5","30 顆÷6 顆", "#f97316"),
+      u2q6: svgDataUri("單元2 題6","34 張÷4 人", "#f97316"),
+      u2q7: svgDataUri("單元2 題7","19 顆÷3 顆", "#f97316"),
+      u2q8: svgDataUri("單元2 題8","42 顆÷5 人", "#f97316"),
+      // 單元3
+      u3q1: svgDataUri("單元3 題1","圓分4 取1", "#10b981"),
+      u3q2: svgDataUri("單元3 題2","8 取3", "#10b981"),
+      u3q3: svgDataUri("單元3 題3","6 取2", "#10b981"),
+      u3q4: svgDataUri("單元3 題4","3 取2", "#10b981"),
+      u3q5: svgDataUri("單元3 題5","5 取1", "#10b981"),
+      u3q6: svgDataUri("單元3 題6","8 取5", "#10b981"),
+      u3q7: svgDataUri("單元3 題7","10 取4", "#10b981"),
+      u3q8: svgDataUri("單元3 題8","2 取1", "#10b981"),
+      // 單元4
+      u4q1: svgDataUri("單元4 題1","(12+9)÷7", "#6366f1"),
+      u4q2: svgDataUri("單元4 題2","(18+4)÷5", "#6366f1"),
+      u4q3: svgDataUri("單元4 題3","(35+7)÷7", "#6366f1"),
+      u4q4: svgDataUri("單元4 題4","(28+8)÷6", "#6366f1"),
+      u4q5: svgDataUri("單元4 題5","(40-4)÷6", "#6366f1"),
+      u4q6: svgDataUri("單元4 題6","(25+5)÷5", "#6366f1"),
+      u4q7: svgDataUri("單元4 題7","(50-8)÷7", "#6366f1"),
+      u4q8: svgDataUri("單元4 題8","(32+4)÷6", "#6366f1"),
+      // 單元5
+      u5q1: svgDataUri("單元5 題1","6 支×4 盒", "#ec4899"),
+      u5q2: svgDataUri("單元5 題2","12 顆×3打", "#ec4899"),
+      u5q3: svgDataUri("單元5 題3","(5×3)×2", "#ec4899"),
+      u5q4: svgDataUri("單元5 題4","8 支×5 盒", "#ec4899"),
+      u5q5: svgDataUri("單元5 題5","(24×3)×2", "#ec4899"),
+      u5q6: svgDataUri("單元5 題6","(28×4)×3", "#ec4899"),
+      u5q7: svgDataUri("單元5 題7","(25×4)×3", "#ec4899"),
+      u5q8: svgDataUri("單元5 題8","(3×5)×2", "#ec4899"),
+      // 單元6
+      u6q1: svgDataUri("單元6 題1","1,984 ≈ ?", "#0f766e"),
+      u6q2: svgDataUri("單元6 題2","3,210 ≈ ?", "#0f766e"),
+      u6q3: svgDataUri("單元6 題3","2,450 ≈ ?", "#0f766e"),
+      u6q4: svgDataUri("單元6 題4","1,980+2,050", "#0f766e"),
+      u6q5: svgDataUri("單元6 題5","3,180-1,090", "#0f766e"),
+      u6q6: svgDataUri("單元6 題6","4,890+1,120", "#0f766e"),
+      u6q7: svgDataUri("單元6 題7","5,430 ≈ ?", "#0f766e"),
+      u6q8: svgDataUri("單元6 題8","2,950+3,020", "#0f766e"),
+      // 單元7
+      u7q1: svgDataUri("單元7 題1","1m = ?cm", "#854d0e"),
+      u7q2: svgDataUri("單元7 題2","1cm = ?mm", "#854d0e"),
+      u7q3: svgDataUri("單元7 題3","5cm = ?mm", "#854d0e"),
+      u7q4: svgDataUri("單元7 題4","120cm = ?m", "#854d0e"),
+      u7q5: svgDataUri("單元7 題5","3m = ?cm", "#854d0e"),
+      u7q6: svgDataUri("單元7 題6","14cm = ?mm", "#854d0e"),
+      u7q7: svgDataUri("單元7 題7","250cm = ?m", "#854d0e"),
+      u7q8: svgDataUri("單元7 題8","8mm = ?cm", "#854d0e")
+    };
+
+    const UNITS = {
+      /* 單元1 */
+      u1: {
+        name: "單元1 直式乘法",
+        focus: `
+          <div class="panel-title">單元1 直式乘法 <span class="badge">NC-3-3-1,2</span></div>
+          <div class="panel-sub">會把二位數、三位數拆成「百、十、個」去乘一位數，並能解生活情境題。</div>
+          <ul>
+            <li>先算個位，再算十位，有進位要加上去。</li>
+            <li>能用直式記錄乘法的過程。</li>
+            <li>能看「一本幾元、買幾本」算出應付金額。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u1')">開始練習 (8題)</button>
+        `,
         questions: [
-          { question: "黑點從刻度 5 往右移動 6 格，會到哪一個刻度？",
-            options: ["9","10","11","12"], answer: 2, hint: "5 + 6 = 11。", img: "numberline-5to11" },
-          { question: "黑點從刻度 11 往左移動 7 格，會到哪裡？",
-            options: ["3","4","5","6"], answer: 1, hint: "11 − 7 = 4。", img: "numberline-11to4" },
-          { question: "一條數線上有二個黑點，分別在 4 和 12，請問它們的距離是多少格？",
-            options: ["6","7","8","9"], answer: 2, hint: "12 − 4 = 8。", img: "numberline-4to12" },
-          { question: "3 比 8 小，請問刻度 3 在刻度 8 的哪一邊？",
-            options: ["左邊","右邊"], answer: 0, hint: "小的在左，大的在右。", img: "numberline-3vs8" },
-          { question: "從刻度 7 往左移動 4 格，會到哪裡？",
-            options: ["3","4","5","6"], answer: 0, hint: "7 − 4 = 3。", img: "numberline-7to3" },
-          { question: "從刻度 3 往右移動 8 格，會到哪裡？",
-            options: ["9","10","11","12"], answer: 2, hint: "3 + 8 = 11。", img: "numberline-3to11" },
-          { question: "在數線上，誰比較大？",
-            options: ["6","4"], answer: 0, hint: "右邊的比較大。", img: "numberline-6vs4" },
-          { question: "二個黑點在 4 和 11，它們的距離是多少？",
-            options: ["5","6","7","8"], answer: 2, hint: "11 − 4 = 7。", img: "numberline-4to11" }
+          { text: "1. 一本筆記本 23 元，姐姐買了 3 本，花了多少元？", img: IMG.u1q1, answer: "69", hint: "先算個位：3×3=9，再算十位：2×3=6，合起來是 69。" },
+          { text: "2. 一盒棒棒糖 14 元，買 6 盒共要多少元？", img: IMG.u1q2, answer: "84", hint: "個位：4×6=24 → 個位4、進2；十位：1×6=6，加進位2=8 → 84。" },
+          { text: "3. 一本漫畫 92 元，姐姐買了 4 本，花了多少元？", img: IMG.u1q3, answer: "368", hint: "個位：2×4=8；十位：9×4=36 → 寫成 3百6十8。" },
+          { text: "4. 一盒水彩 78 元，老師買了 6 盒，花了多少元？", img: IMG.u1q4, answer: "468", hint: "個位：8×6=48 → 個位8、進4；十位：7×6=42，加進位4=46 → 4百6十8。" },
+          { text: "5. 54×8＝？", img: IMG.u1q5, answer: "432", hint: "個位：4×8=32 → 個位2、進3；十位：5×8=40，加進位3=43 → 432。" },
+          { text: "6. 35×6＝？", img: IMG.u1q6, answer: "210", hint: "個位：5×6=30 → 個位0、進3；十位：3×6=18，加3=21 → 210。" },
+          { text: "7. 245 元的書，姐姐買了 3 本，花了多少元？", img: IMG.u1q7, answer: "735", hint: "個位：5×3=15 → 個位5、進1；十位：4×3=12，加1=13 → 進1；百位：2×3=6，加1=7 → 735。" },
+          { text: "8. 一盒水果禮盒 398 元，媽媽買了 7 盒，花了多少元？", img: IMG.u1q8, answer: "2786", hint: "個位：8×7=56 → 個位6、進5；十位：9×7=63，加5=68 → 個位8、進6；百位：3×7=21，加6=27 → 2786。" }
         ]
       },
-      rectangle: {
-        code: "SC-3-2-2",
-        title: "以「角」與「邊」等構成要素辨認長方形",
-        desc: "長方形有四個直角，對邊等長，上下是長邊、左右是寬邊。",
-        reading: [
-          "1. 上下兩條邊一樣長，左右兩條邊也一樣長。",
-          "2. 四個角都是直角。",
-          "3. 上下叫長邊，左右叫寬邊。",
-          "4. 對邊等長又有四個直角，就是長方形。"
-        ],
+
+      /* 單元2 */
+      u2: {
+        name: "單元2 除法分裝/平分",
+        focus: `
+          <div class="panel-title">單元2 除法分裝/平分 <span class="badge">NC-3-4-1,2</span></div>
+          <div class="panel-sub">從「每幾個裝一包」或「分給幾個人」去想除法，會用乘法+減法記錄，最後寫成除法算式。</div>
+          <ul>
+            <li>先看總共有幾個。</li>
+            <li>再看一包幾個(或幾個人要分)。</li>
+            <li>能寫成「被除數÷除數＝商…餘數」。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u2')">開始練習 (8題)</button>
+        `,
         questions: [
-          { question: "下面哪一個條件可以判斷一個圖形是長方形？",
-            options: [
-              "四條邊都不一樣長",
-              "上下邊一樣長、左右邊一樣長、四個角都是直角",
-              "只有一個直角",
-              "四條邊都一樣長但沒有直角"
-            ],
-            answer: 1,
-            hint: "要同時有：對邊等長 + 四個直角。", img: "rect-basic" },
-          { question: "長方形的四個角都是幾度的角？",
-            options: ["銳角", "鈍角", "直角"],
-            answer: 2,
-            hint: "直角=90°。", img: "rect-angles" },
-          { question: "長方形的上下兩條邊，我們常稱作什麼？",
-            options: ["斜邊", "長邊", "寬邊"],
-            answer: 1,
-            hint: "比較長的那一組叫長邊。" },
-          { question: "這個圖形上下 6 公分、左右 4 公分，四個角都是直角，它是長方形嗎？",
-            options: ["是", "不是"],
-            answer: 0,
-            hint: "對邊等長又是直角，就是長方形。", img: "rect-6x4" },
-          { question: "如果一個圖形四條邊都一樣長、四個角都是直角，它一定是？",
-            options: ["長方形", "正方形", "長方形也是正方形"],
-            answer: 2,
-            hint: "正方形也可以看成特別的長方形。" },
-          { question: "下列哪一個不是長方形？",
-            options: [
-              "上下 5 公分、左右 3 公分、四個直角",
-              "上下 4 公分、左右 4 公分、四個直角",
-              "上下 6 公分、左右 3 公分、其中一個角不是直角",
-              "上下 10 公分、左右 2 公分、四個直角"
-            ],
-            answer: 2,
-            hint: "只要有一個角不是直角，就不是。" },
-          { question: "老師量到上下都是 8 公分，左右都是 5 公分，四個角都是直角，這個圖形的寬邊是？",
-            options: ["8 公分", "5 公分", "13 公分"],
-            answer: 1,
-            hint: "左右較短的那一組是寬邊。" },
-          { question: "長方形可以用「對摺」來檢查嗎？",
-            options: ["可以，對摺後兩邊會重合", "不行，對摺一定不一樣"],
-            answer: 0,
-            hint: "上下、左右都能摺。", img: "rect-fold" }
+          { text: "1. 有 18 顆糖果，每 3 顆裝一包，可以裝幾包？", img: IMG.u2q1, answer: "6", hint: "這是分裝：18÷3＝？想3×幾＝18 → 3×6＝18，所以是 6 包。" },
+          { text: "2. 有 20 支鉛筆，分給 4 位同學，每人分到幾支？", img: IMG.u2q2, answer: "5", hint: "這是平分：20÷4＝？先想4×5＝20，所以每人5支。" },
+          { text: "3. 25 顆草莓，每 4 顆裝一盒，可以裝幾盒？還剩幾顆？請寫出裝了幾盒。", img: IMG.u2q3, answer: "6", hint: "25÷4，4×6＝24 剛好不超過，會裝6盒，還會剩1顆。" },
+          { text: "4. 27 支彩色筆，要分給 5 個人，平均每人分到幾支？(寫整數部分)", img: IMG.u2q4, answer: "5", hint: "27÷5，5×5=25 不超過，還剩2支 → 每人5支，餘2。" },
+          { text: "5. 30 顆彈珠，每 6 顆裝一袋，可以裝幾袋？", img: IMG.u2q5, answer: "5", hint: "30÷6 → 6×5=30，剛好分完，所以是5袋。" },
+          { text: "6. 有 34 張貼紙，要分給 4 個小朋友，每人可以分到幾張？", img: IMG.u2q6, answer: "8", hint: "34÷4 → 4×8=32，不超過34 → 每人8張，還剩2張。" },
+          { text: "7. 老師買了 19 顆巧克力，要裝成每袋 3 顆，可以裝幾袋？", img: IMG.u2q7, answer: "6", hint: "19÷3 → 3×6=18 → 可以裝6袋，還會剩1顆。" },
+          { text: "8. 42 顆糖果分給 5 位同學，每人可以分到幾顆？(寫整數部分)", img: IMG.u2q8, answer: "8", hint: "42÷5 → 5×8=40 → 每人8顆，餘2。這類先找不超過的乘法。" }
         ]
       },
-      circle: {
-        code: "SC-3-3-1",
-        title: "認識圓心、圓周、半徑與直徑",
-        desc: "圓的半徑都一樣長，直徑會通過圓心，直徑 = 2 × 半徑。",
-        reading: [
-          "1. 圓心是圓的中心點。",
-          "2. 連到圓周的一條線段叫半徑。",
-          "3. 通過圓心又連到圓周兩端的叫直徑。",
-          "4. 直徑 = 2 × 半徑，半徑 = 直徑 ÷ 2。"
-        ],
+
+      /* 單元3 */
+      u3: {
+        name: "單元3 分數的認識",
+        focus: `
+          <div class="panel-title">單元3 分數的認識 <span class="badge">NC-3-9-1</span></div>
+          <div class="panel-sub">從「被平均分成幾份」學會分母，取幾份就是分子，能看圖說分數、塗分數。</div>
+          <ul>
+            <li>說出「幾分之幾」。</li>
+            <li>連續量、離散量都能用分數表示。</li>
+            <li>能看圖寫分數。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u3')">開始練習 (8題)</button>
+        `,
         questions: [
-          { question: "下面哪一條線段是圓的半徑？",
-            options: [
-              "通過圓心連到圓周的一條線",
-              "沒有通過圓心的線",
-              "一條彎彎的線"
-            ],
-            answer: 0,
-            hint: "半徑一定從圓心出發。", img: "circle-basic" },
-          { question: "一個圓的半徑是 6 公分，直徑是多少公分？",
-            options: ["3 公分", "6 公分", "12 公分"],
-            answer: 2,
-            hint: "直徑 = 半徑 × 2 → 12。", img: "circle-r6" },
-          { question: "一個圓的直徑是 10 公分，半徑是多少公分？",
-            options: ["5 公分","10 公分","20 公分"],
-            answer: 0,
-            hint: "半徑 = 直徑 ÷ 2。" },
-          { question: "下列敘述何者正確？",
-            options: [
-              "一個圓只有一條半徑",
-              "一個圓可以有很多條半徑而且都一樣長",
-              "直徑都比半徑短"
-            ],
-            answer: 1,
-            hint: "圓心到圓周都一樣遠。"},
-          { question: "直徑跟 2 條半徑的關係是？",
-            options: [
-              "直徑比兩條半徑加起來短",
-              "直徑跟 2 條半徑接起來一樣長",
-              "沒有一定"
-            ],
-            answer: 1,
-            hint: "直徑 = 2 × 半徑。", img: "circle-2r" },
-          { question: "老師要畫直徑 6 公分的圓，圓規應該先量幾公分的半徑？",
-            options: ["2 公分","3 公分","6 公分"],
-            answer: 1,
-            hint: "半徑 = 6 ÷ 2 = 3。" },
-          { question: "下列哪一個名稱是「圓周上的點」？",
-            options: ["圓心","在圓周上的 A 點","直徑"],
-            answer: 1,
-            hint: "圓心不在外面喔。" },
-          { question: "一個圓的半徑是 12 公分，直徑是多少？",
-            options: ["12 公分","18 公分","24 公分"],
-            answer: 2,
-            hint: "直徑 = 12 × 2 = 24。" }
+          { text: "1. 一個圓平均分成 4 份，塗了其中 1 份，應寫成幾分之幾？", img: IMG.u3q1, answer: "1/4", hint: "被分成4份 → 分母4；塗1份 → 分子1，所以是 1/4。" },
+          { text: "2. 一條蛋糕平均分成 8 份，小明吃了 3 份，吃了幾分之幾？", img: IMG.u3q2, answer: "3/8", hint: "平均分成8份 → 分母8；吃3份 → 分子3 → 3/8。" },
+          { text: "3. 有 6 顆草莓，被平均分成 6 份，拿走 2 份，表示成分數是？", img: IMG.u3q3, answer: "2/6", hint: "一共6份 → 分母6；拿2份 → 分子2 → 2/6。" },
+          { text: "4. 一個長方形被平均分成 3 份，塗了 2 份，請寫出分數。", img: IMG.u3q4, answer: "2/3", hint: "分成3份 → 分母3；塗2份 → 分子2。" },
+          { text: "5. 有 10 顆餅乾，平均分成 5 份，每份有 2 顆，取了 1 份，請寫出所取的分數。", img: IMG.u3q5, answer: "1/5", hint: "被平均分成5份 → 寫成幾分之幾 → 1/5。" },
+          { text: "6. 一個披薩切成 8 片，吃了 5 片，吃了幾分之幾？", img: IMG.u3q6, answer: "5/8", hint: "切成8片 → 分母8；吃5片 → 分子5 → 5/8。" },
+          { text: "7. 下圖一條布被平均分成 10 份，剪下 4 份，請寫出分數。", img: IMG.u3q7, answer: "4/10", hint: "平均分10份 → 分母10；剪4份 → 分子4 → 4/10。" },
+          { text: "8. 一個正方形平均分成 2 份，塗了 1 份，請寫出分數。", img: IMG.u3q8, answer: "1/2", hint: "分成2份 → 分母2；塗1份 → 分子1 → 1/2。" }
         ]
       },
-      weight1: {
-        code: "NC-3-16-1",
-        title: "認識重量單位「公斤」、「公克」及其關係",
-        desc: "1 公斤 = 1000 公克，可以用來讀秤、做加減、做整數倍的乘法。",
-        reading: [
-          "1. 輕的用公克(g)、重的用公斤(kg)。",
-          "2. 1 公斤 = 1000 公克（一定要背）。",
-          "3. 看秤時要看指針停在哪個刻度。",
-          "4. 公克、公斤都可以做加減和乘法。"
-        ],
+
+      /* 單元4 */
+      u4: {
+        name: "單元4 先算後除",
+        focus: `
+          <div class="panel-title">單元4 先加(減)後除 <span class="badge">NC-3-7-2</span></div>
+          <div class="panel-sub">先把總數算出來，再平均分或看能分幾組，2 個算式都要有。</div>
+          <ul>
+            <li>先算加減得到「總共幾個」。</li>
+            <li>再用除法分給幾個人或幾組。</li>
+            <li>生活情境：郊遊分點心、比賽分隊。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u4')">開始練習 (8題)</button>
+        `,
         questions: [
-          { question: "1 公斤等於多少公克？",
-            options: ["10 公克","100 公克","1000 公克"],
-            answer: 2,
-            hint: "1 公斤 = 1000 公克。", img: "weight-1kg-block" },
-          { question: "一包糖 40 公克，用掉 25 公克，還剩多少公克？",
-            options: ["15 公克","20 公克","65 公克"],
-            answer: 0,
-            hint: "40 − 25 = 15。" },
-          { question: "20 公克 + 35 公克 = ？",
-            options: ["45 公克","52 公克","55 公克"],
-            answer: 2,
-            hint: "就像在加 20 + 35，一步一步加，會是 55 公克。", img: "weight-55g-two-bags" },
-          { question: "6 公斤要換成公克，是多少公克？",
-            options: ["600 公克","6000 公克","60 公克"],
-            answer: 1,
-            hint: "1 公斤 = 1000 公克 → 6 × 1000 = 6000 公克。" },
-          { question: "4000 公克換成公斤是多少？",
-            options: ["2 公斤","3 公斤","4 公斤"],
-            answer: 2,
-            hint: "1000 公克 = 1 公斤，所以 4000 公克 = 4 公斤。", img: "weight-4000g" },
-          { question: "這個東西放在秤上，指針指在 350 公克，請問多重？",
-            options: ["300 公克","350 公克","500 公克"],
-            answer: 1,
-            hint: "在 300 和 400 中間長刻度是 350 公克。", img: "weight-350g-fruit" },
-          { question: "一小包糖果 16 公克，3 包共幾公克？",
-            options: ["32 公克","44 公克","48 公克"],
-            answer: 2,
-            hint: "16 × 3 = 48。" },
-          { question: "下列哪一個敘述正確？",
-            options: [
-              "1000 公克比 1 公斤重",
-              "1000 公克和 1 公斤一樣重",
-              "1000 公克比 1 公斤輕"
-            ],
-            answer: 1,
-            hint: "它們是同一個重量的兩種說法。" }
+          { text: "1. 班上男生 12 人，女生 9 人，要分成 7 組，每組幾人？", img: IMG.u4q1, answer: "3", hint: "先加：12+9=21，再：21÷7=3。" },
+          { text: "2. 小明有 18 顆糖，媽媽又給他 4 顆，他要分給 5 個同學，每人分到幾顆？", img: IMG.u4q2, answer: "4", hint: "先加：18+4=22，再：22÷5=4…2 → 寫4顆。" },
+          { text: "3. 遊樂園有 35 張票，又送來 7 張，分給 7 組學生，每組可分到幾張？", img: IMG.u4q3, answer: "6", hint: "先加：35+7=42，再：42÷7=6。" },
+          { text: "4. 美勞課做了 28 朵花，老師又補做 8 朵，要平均分給 6 桌同學，每桌可以拿到幾朵？", img: IMG.u4q4, answer: "6", hint: "先加：28+8=36，再：36÷6=6。" },
+          { text: "5. 文具箱裡有 40 枝筆，小華拿走 4 枝，剩下的要分給 6 個人，每人可以分到幾枝？", img: IMG.u4q5, answer: "6", hint: "先減：40-4=36，再：36÷6=6。" },
+          { text: "6. 教室裡有 25 本故事書，又借來 5 本，要分給 5 組同學，每組幾本？", img: IMG.u4q6, answer: "6", hint: "先加：25+5=30，再：30÷5=6。" },
+          { text: "7. 學校買了 50 個麵包，體育班吃了 8 個，剩下的要分給 7 班，每班可以分到幾個？(寫整數)", img: IMG.u4q7, answer: "6", hint: "先減：50-8=42，再：42÷7=6。" },
+          { text: "8. 遊戲需要 32 顆球，老師又拿來 4 顆，現在有 6 隊同學要比賽，每隊可以分到幾顆？", img: IMG.u4q8, answer: "6", hint: "先加：32+4=36，再：36÷6=6。" }
         ]
       },
-      weight2: {
-        code: "NC-3-16-2",
-        title: "公斤、公克複名數的加、減計算（不進退位）",
-        desc: "把公斤和公克分開算，就能加、能減、也能乘。",
-        reading: [
-          "1. 複名數 = 一次出現『公斤』和『公克』。",
-          "2. 加法：公斤加公斤；公克加公克。",
-          "3. 減法：公斤減公斤；公克減公克。",
-          "4. 這裡先學不進位、不退位的例子。"
-        ],
+
+      /* 單元5 */
+      u5: {
+        name: "單元5 連乘問題",
+        focus: `
+          <div class="panel-title">單元5 連乘兩步驟 <span class="badge">NC-3-7-3</span></div>
+          <div class="panel-sub">第1步先求1組有多少，第2步再乘有幾組，兩步都要寫出來。</div>
+          <ul>
+            <li>常見情境：每盒幾個、幾盒是一箱、幾箱共有幾個。</li>
+            <li>先算小單位 → 再算大單位。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u5')">開始練習 (8題)</button>
+        `,
         questions: [
-          { question: "1 公斤 600 公克 ＋ 1 公斤 200 公克 = ？",
-            options: ["2 公斤 700 公克","2 公斤 800 公克","2 公斤 900 公克"],
-            answer: 1,
-            hint: "1+1=2；600+200=800。" },
-          { question: "3 公斤 500 公克 − 2 公斤 400 公克 = ？",
-            options: ["1 公斤 100 公克","1 公斤 200 公克","1 公斤 300 公克"],
-            answer: 0,
-            hint: "3-2=1；500-400=100。" },
-          { question: "2500 公克 ＋ 1300 公克 = ？",
-            options: ["3 公斤 800 公克","3 公斤 500 公克","4 公斤"],
-            answer: 0,
-            hint: "2500+1300=3800g=3kg800g。" },
-          { question: "1 公斤 300 公克 ＋ 2 公斤 250 公克 = ？",
-            options: ["3 公斤 50 公克","3 公斤 550 公克","3 公斤 700 公克"],
-            answer: 1,
-            hint: "跟教材一樣，是 3 公斤 550 公克。" },
-          { question: "4 公斤 900 公克 − 1 公斤 850 公克 = ？",
-            options: ["3 公斤 50 公克","3 公斤 100 公克","3 公斤 150 公克"],
-            answer: 0,
-            hint: "4-1=3；900-850=50 → 3kg50g。" },
-          { question: "130 公克 × 3 = ？",
-            options: ["390 公克","360 公克","300 公克"],
-            answer: 0,
-            hint: "130+130+130=390。" },
-          { question: "6 公斤 300 公克 等於幾公克？",
-            options: ["630 公克","6300 公克","6003 公克"],
-            answer: 1,
-            hint: "6kg=6000g → +300g=6300g。" },
-          { question: "4300 公克 − 1 公斤 100 公克 = ？",
-            options: ["3 公斤 100 公克","3 公斤 200 公克","3 公斤 300 公克"],
-            answer: 1,
-            hint: "1kg100g=1100g；4300-1100=3200g=3kg200g。" }
+          { text: "1. 一盒有 6 支鉛筆，一箱有 4 盒，一共幾支鉛筆？", img: IMG.u5q1, answer: "24", hint: "1箱=6×4=24 支。" },
+          { text: "2. 一打有 12 顆雞蛋，餐廳買了 3 打，一共有幾顆？", img: IMG.u5q2, answer: "36", hint: "12×3=36 顆。" },
+          { text: "3. 一包有 5 個麵包，一箱有 3 包，學校買了 2 箱，一共有幾個麵包？", img: IMG.u5q3, answer: "30", hint: "1箱=5×3=15；2箱=15×2=30。" },
+          { text: "4. 一盒有 8 枝色筆，老師買了 5 盒給三年級，一共有幾枝？", img: IMG.u5q4, answer: "40", hint: "8×5=40 枝。" },
+          { text: "5. 每班有 24 人，三年級有 3 班，學校要發每人 2 本講義，一共要幾本？", img: IMG.u5q5, answer: "144", hint: "先人數：24×3=72；再：72×2=144 本。" },
+          { text: "6. 美勞課每個學生要 3 張色紙，五年級有 4 班，每班 28 人，一共要準備幾張色紙？", img: IMG.u5q6, answer: "336", hint: "人數：28×4=112；再：112×3=336。" },
+          { text: "7. 一瓶飲料 25 元，1 組要買 4 瓶，一共有 3 組要買，一共要多少元？", img: IMG.u5q7, answer: "300", hint: "1組：25×4=100；3組：100×3=300。" },
+          { text: "8. 一個禮物包要貼紙 3 張，1 班要 5 個禮物包，兩個班一共要幾張貼紙？", img: IMG.u5q8, answer: "30", hint: "1班：3×5=15；2班：15×2=30。" }
+        ]
+      },
+
+      /* 單元6 */
+      u6: {
+        name: "單元6 加減估算",
+        focus: `
+          <div class="panel-title">單元6 四位數加減估算 <span class="badge">NC-3-8-1</span></div>
+          <div class="panel-sub">先看哪個整百/整千比較近，再加減，最後判斷是不是合理。</div>
+          <ul>
+            <li>靠近的就進位或捨去。</li>
+            <li>用心算先抓大概值。</li>
+            <li>估算後要說出合理性。</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u6')">開始練習 (8題)</button>
+        `,
+        questions: [
+          { text: "1. 1,984 約是多少？(取接近的千位)", img: IMG.u6q1, answer: "2000", hint: "1,984 靠近 2,000，比 1,000 近，所以估 2,000。" },
+          { text: "2. 3,210 約是多少？(取接近的千位)", img: IMG.u6q2, answer: "3000", hint: "3,210 比 3,000 近，所以估 3,000。" },
+          { text: "3. 2,450 約是多少？(取接近的百位)", img: IMG.u6q3, answer: "2500", hint: "2,450 介在 2,400 和 2,500 中間，可估 2,500。" },
+          { text: "4. 用估算：1,980 + 2,050 約等於多少？(取千位後再加)", img: IMG.u6q4, answer: "4000", hint: "1,980≈2,000，2,050≈2,000 → 2,000+2,000=4,000。" },
+          { text: "5. 用估算：3,180 − 1,090 約等於多少？(取千位後再減)", img: IMG.u6q5, answer: "2000", hint: "3,180≈3,000，1,090≈1,000 → 3,000-1,000=2,000。" },
+          { text: "6. 4,890 要加上 1,120，估算後大約是多少？", img: IMG.u6q6, answer: "6000", hint: "4,890≈5,000；1,120≈1,000 → 5,000+1,000=6,000。" },
+          { text: "7. 5,430 約是多少？(取接近的千位)", img: IMG.u6q7, answer: "5000", hint: "5,430 比 5,000 近，所以估 5,000。" },
+          { text: "8. 用估算判斷：2,950＋3,020 的結果大約是幾千？(請只寫幾千，如「6千」寫6000)", img: IMG.u6q8, answer: "6000", hint: "2,950≈3,000；3,020≈3,000 → 3,000+3,000=6,000。" }
+        ]
+      },
+
+      /* 單元7 */
+      u7: {
+        name: "單元7 長度換算",
+        focus: `
+          <div class="panel-title">單元7 長度單位換算 <span class="badge">NC-3-12-1</span></div>
+          <div class="panel-sub">認識毫米，會在 mm、cm、m 之間換算，短的東西用毫米。</div>
+          <ul>
+            <li>1m = 100cm</li>
+            <li>1cm = 10mm</li>
+            <li>能 cm ↔ mm ↔ m 互換</li>
+          </ul>
+          <button class="primary-btn" onclick="startUnit('u7')">開始練習 (8題)</button>
+        `,
+        questions: [
+          { text: "1. 1 公尺等於幾公分？", img: IMG.u7q1, answer: "100", hint: "1m = 100cm，這是基本換算。" },
+          { text: "2. 1 公分等於幾毫米？", img: IMG.u7q2, answer: "10", hint: "1cm = 10mm。" },
+          { text: "3. 5 公分等於幾毫米？", img: IMG.u7q3, answer: "50", hint: "1cm=10mm → 5cm=50mm。" },
+          { text: "4. 120 公分等於幾公尺？(寫阿拉伯數字)", img: IMG.u7q4, answer: "1.2", hint: "100cm=1m，還有20cm=0.2m → 1.2m。" },
+          { text: "5. 3 公尺等於幾公分？", img: IMG.u7q5, answer: "300", hint: "1m=100cm → 3m=300cm。" },
+          { text: "6. 一支鉛筆長 14 公分，等於幾毫米？", img: IMG.u7q6, answer: "140", hint: "14cm → 14×10=140mm。" },
+          { text: "7. 一條繩子長 250 公分，等於幾公尺？", img: IMG.u7q7, answer: "2.5", hint: "250cm → 200cm=2m，再加50cm=0.5m → 2.5m。" },
+          { text: "8. 小紙條長 8 毫米，等於幾公分？(寫小數)", img: IMG.u7q8, answer: "0.8", hint: "10mm=1cm → 8mm=0.8cm。" }
         ]
       }
     };
 
-    // ====== 狀態 ======
-    let currentUnitKey = "line";
-    let currentIndex = -1;
-    let currentScore = 0;
+    let currentUnit = 'u1';
+    let currentQIndex = 0;
 
-    // ====== DOM ======
-    const unitTitle = document.getElementById("unit-title");
-    const unitDesc  = document.getElementById("unit-desc");
-    const unitCode  = document.getElementById("unit-code");
-    const readingBox= document.getElementById("reading-box");
-    const readingContent = document.getElementById("reading-content");
-    const nextBtn   = document.getElementById("next-to-quiz");
-    const qTitle    = document.getElementById("question-title");
-    const optionsBox= document.getElementById("options");
-    const hintBox   = document.getElementById("hint-box");
-    const hintContent = document.getElementById("hint-content");
-    const progressBar = document.getElementById("progress-bar");
-    const qCounter  = document.getElementById("q-counter");
-    const scoreBox  = document.getElementById("score");
-    const imgBox    = document.getElementById("img-box");
-    const finishBox = document.getElementById("finish-box");
-    const restartBtn= document.getElementById("restart-unit");
+    document.getElementById("learning-panel").innerHTML = UNITS['u1'].focus;
 
-    function loadUnit(key){
-      currentUnitKey = key;
-      const unit = UNIT_DATA[key];
-      unitTitle.textContent = unit.title;
-      unitDesc.textContent  = unit.desc;
-      unitCode.textContent  = unit.code;
-
-      readingContent.innerHTML = "";
-      unit.reading.forEach(t=>{
-        const li = document.createElement("li");
-        li.textContent = t;
-        readingContent.appendChild(li);
-      });
-
-      currentIndex = -1;
-      currentScore = 0;
-      scoreBox.textContent = "0 / 8";
-      qCounter.textContent = "0 / 8";
-      progressBar.style.width = "0%";
-      readingBox.style.display = "block";
-      finishBox.style.display  = "none";
-      qTitle.textContent = "請先看左邊的學習重點喔 👈";
-      optionsBox.innerHTML = "";
-      imgBox.style.display = "none";
-      hintBox.style.display = "none";
-    }
-
-    document.querySelectorAll(".unit-btn").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        document.querySelectorAll(".unit-btn").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        loadUnit(btn.dataset.unit);
+    document.querySelectorAll('.unit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const unitId = btn.getAttribute('data-unit');
+        showLearning(unitId);
       });
     });
 
-    nextBtn.addEventListener("click",()=>{ goNextQuestion(); });
+    function showLearning(unitId) {
+      currentUnit = unitId;
+      currentQIndex = 0;
+      document.getElementById("learning-panel").innerHTML = UNITS[unitId].focus;
+      document.getElementById("learning-panel").style.display = "block";
+      document.getElementById("question-panel").style.display = "none";
+    }
 
-    function goNextQuestion(){
-      const unit = UNIT_DATA[currentUnitKey];
-      currentIndex++;
-      if(currentIndex >= unit.questions.length){
-        finishBox.style.display = "block";
-        return;
-      }
-      readingBox.style.display = "none";
+    function startUnit(unitId) {
+      currentUnit = unitId;
+      currentQIndex = 0;
       renderQuestion();
+      document.getElementById("learning-panel").style.display = "none";
+      document.getElementById("question-panel").style.display = "block";
     }
 
-    function renderQuestion(){
-      const unit = UNIT_DATA[currentUnitKey];
-      const q    = unit.questions[currentIndex];
-      qTitle.textContent = (currentIndex+1)+". "+q.question;
-      optionsBox.innerHTML = "";
-      hintBox.style.display = "none";
+    function renderQuestion() {
+      const unit = UNITS[currentUnit];
+      const q = unit.questions[currentQIndex];
+      const progressPercent = ((currentQIndex) / unit.questions.length) * 100;
 
-      if(q.img){
-        imgBox.style.display = "block";
-        imgBox.innerHTML = makeSVG(q.img);
-      }else{
-        imgBox.style.display = "none";
-      }
-
-      q.options.forEach((opt,idx)=>{
-        const div = document.createElement("div");
-        div.className = "option";
-        div.textContent = opt;
-        div.addEventListener("click",()=>checkAnswer(idx));
-        optionsBox.appendChild(div);
-      });
-
-      qCounter.textContent = (currentIndex+1)+" / "+unit.questions.length;
-      progressBar.style.width = (currentIndex / unit.questions.length) * 100 + "%";
+      document.getElementById("question-panel").innerHTML = `
+        <div class="question-card">
+          <div class="panel-title">${unit.name}</div>
+          <div class="progress"><div class="progress-fill" style="width:${progressPercent}%;"></div></div>
+          <div class="panel-sub">第 ${currentQIndex + 1} 題 / 共 ${unit.questions.length} 題</div>
+          <div class="question-top">
+            <div class="question-text">${q.text}</div>
+            <div class="question-img"><img src="${q.img}" alt="示意圖"></div>
+          </div>
+          <div class="answer-area">
+            <input type="text" id="answer-input" placeholder="請輸入答案" onkeydown="if(event.key==='Enter'){checkAnswer();}">
+            <button class="primary-btn" onclick="checkAnswer()">確認</button>
+          </div>
+          <div id="correct-banner" class="correct-banner">✅ 答對了！</div>
+          <div id="hint-box" class="hint-box">${q.hint}</div>
+        </div>
+      `;
     }
 
-    function checkAnswer(choice){
-      const unit = UNIT_DATA[currentUnitKey];
-      const q    = unit.questions[currentIndex];
-      const allOptions = document.querySelectorAll(".option");
+    function checkAnswer() {
+      const unit = UNITS[currentUnit];
+      const q = unit.questions[currentQIndex];
+      const userAns = (document.getElementById("answer-input").value || "").trim();
+      const card = document.querySelector(".question-card");
+      const hint = document.getElementById("hint-box");
+      const banner = document.getElementById("correct-banner");
 
-      if(choice === q.answer){
-        allOptions.forEach(o=>o.classList.remove("wrong"));
-        allOptions[choice].classList.add("correct");
-        hintBox.style.display = "none";
-        currentScore++;
-        scoreBox.textContent = currentScore + " / " + unit.questions.length;
-        setTimeout(()=>{
-          if(currentIndex === unit.questions.length - 1){
-            progressBar.style.width = "100%";
-            finishBox.style.display = "block";
+      if (userAns === "") return;
+
+      if (userAns === q.answer) {
+        hint.style.display = "none";
+        banner.style.display = "inline-flex";
+        setTimeout(() => {
+          currentQIndex++;
+          if (currentQIndex >= unit.questions.length) {
+            showDone(unit.name);
+          } else {
+            renderQuestion();
           }
-          goNextQuestion();
-        }, 550);
-      }else{
-        allOptions[choice].classList.add("wrong");
-        hintBox.style.display = "block";
-        hintContent.textContent = q.hint || "回想一下剛剛的學習重點喔！";
+        }, 450);
+      } else {
+        hint.style.display = "block";
+        banner.style.display = "none";
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
       }
     }
 
-    restartBtn.addEventListener("click",()=>{ loadUnit(currentUnitKey); });
-
-    // ===== SVG：把「第一單元」和「第四單元」的圖下面那行文字拿掉 =====
-    function makeSVG(key){
-      const scaleBase = `<rect x="25" y="80" width="150" height="28" rx="6" fill="#fde68a" stroke="#f59e0b" stroke-width="2"></rect>`;
-      switch(key){
-        /* 數線（不顯示答案文字） */
-        case "numberline-5to11":
-          return `<svg class="inline-svg" viewBox="0 0 320 100">
-            <line x1="20" y1="50" x2="300" y2="50" stroke="#222" stroke-width="2"></line>
-            ${[0,1,2,3,4,5,6,7,8,9,10,11].map((n,i)=>`<line x1="${30+i*22}" y1="45" x2="${30+i*22}" y2="55" stroke="#222" stroke-width="2"></line><text x="${27+i*22}" y="70" font-size="10">${n}</text>`).join("")}
-            <circle cx="${30+5*22}" cy="50" r="5" fill="#3f72ff"></circle>
-            <line x1="${30+5*22}" y1="32" x2="${30+11*22}" y2="32" stroke="#3f72ff" stroke-width="2" marker-end="url(#arr)"></line>
-            <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#3f72ff"></path></marker></defs>
-          </svg>`;
-        case "numberline-11to4":
-        case "numberline-4to12":
-        case "numberline-7to3":
-        case "numberline-3to11":
-        case "numberline-4to11":
-        case "numberline-3vs8":
-        case "numberline-6vs4":
-          return `<svg class="inline-svg" viewBox="0 0 320 90">
-            <line x1="20" y1="45" x2="300" y2="45" stroke="#222" stroke-width="2"></line>
-            ${[0,1,2,3,4,5,6,7,8,9,10,11,12].map((n,i)=>`<line x1="${25+i*20}" y1="40" x2="${25+i*20}" y2="50" stroke="#222" stroke-width="2"></line><text x="${22+i*20}" y="68" font-size="10">${n}</text>`).join("")}
-          </svg>`;
-
-        /* 長方形、圓形 → 保留底下說明 */
-        case "rect-basic":
-        case "rect-angles":
-        case "rect-6x4":
-        case "rect-fold":
-          return `<svg class="inline-svg" viewBox="0 0 240 140">
-            <rect x="40" y="30" width="150" height="80" fill="#fff" stroke="#3f72ff" stroke-width="3" rx="4"></rect>
-            <text x="50" y="25" font-size="11" fill="#3f72ff">對邊等長、四個直角</text>
-            <text x="48" y="120" font-size="10" fill="#444">長方形示意</text>
-          </svg>`;
-        case "circle-basic":
-        case "circle-r6":
-        case "circle-2r":
-          return `<svg class="inline-svg" viewBox="0 0 200 160">
-            <circle cx="100" cy="70" r="45" fill="#fff" stroke="#3f72ff" stroke-width="3"></circle>
-            <circle cx="100" cy="70" r="4" fill="#ff5f6d"></circle>
-            <line x1="100" y1="70" x2="145" y2="70" stroke="#ff5f6d" stroke-width="3"></line>
-            <line x1="55" y1="70" x2="145" y2="70" stroke="#f97316" stroke-width="2"></line>
-            <text x="78" y="23" font-size="11" fill="#ff5f6d">圓心</text>
-            <text x="26" y="135" font-size="10" fill="#3f72ff">紅：半徑　橘：直徑</text>
-          </svg>`;
-
-        /* 重量（不顯示答案文字） */
-        case "weight-1kg-block":
-          return `<svg class="inline-svg" viewBox="0 0 220 130">
-            ${scaleBase}
-            <rect x="55" y="55" width="90" height="12" rx="5" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"></rect>
-            <rect x="80" y="20" width="40" height="40" rx="6" fill="#e5e7eb" stroke="#4b5563" stroke-width="1.5"></rect>
-            <text x="90" y="46" font-size="13" font-weight="700" fill="#111827">1kg</text>
-          </svg>`;
-        case "weight-4000g":
-          return `<svg class="inline-svg" viewBox="0 0 220 140">
-            ${scaleBase}
-            <rect x="45" y="50" width="110" height="14" rx="5" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"></rect>
-            ${[0,1,2,3].map(i=>`
-              <rect x="${48+i*26}" y="22" width="22" height="30" rx="4" fill="#fde68a" stroke="#f97316" stroke-width="1"></rect>
-              <text x="${51+i*26}" y="41" font-size="8" fill="#9a3412">1kg</text>
-            `).join("")}
-          </svg>`;
-        case "weight-350g-fruit":
-          return `<svg class="inline-svg" viewBox="0 0 220 140">
-            ${scaleBase}
-            <ellipse cx="110" cy="62" rx="55" ry="10" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"></ellipse>
-            <path d="M90 30 Q110 5 130 30 L135 70 Q110 85 85 70 Z" fill="#f97316" stroke="#c05621" stroke-width="1.5"></path>
-            <text x="95" y="52" font-size="10" fill="#fff">水果</text>
-            <circle cx="45" cy="45" r="22" fill="#fff" stroke="#f97316" stroke-width="1.5"></circle>
-            <line x1="45" y1="45" x2="60" y2="35" stroke="#f97316" stroke-width="2"></line>
-          </svg>`;
-        case "weight-55g-two-bags":
-          return `<svg class="inline-svg" viewBox="0 0 220 130">
-            ${scaleBase}
-            <rect x="55" y="55" width="90" height="12" rx="5" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1.5"></rect>
-            <rect x="65" y="25" width="28" height="26" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="1"></rect>
-            <text x="69" y="42" font-size="9" fill="#991b1b">20g</text>
-            <rect x="105" y="18" width="32" height="33" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"></rect>
-            <text x="109" y="39" font-size="9" fill="#854d0e">35g</text>
-          </svg>`;
-
-        default:
-          return `<div>（圖示）</div>`;
-      }
+    function showDone(unitName) {
+      document.getElementById("question-panel").innerHTML = `
+        <div class="done-box">
+          <h3>🎉 恭喜完成「${unitName}」！</h3>
+          <p>你已經答完 8 題囉，想要再看一次學習重點嗎？</p>
+          <button class="primary-btn" onclick="showLearning('${currentUnit}')">回到本單元學習重點</button>
+          <p class="small-muted">也可以到左邊換下一個單元繼續挑戰。</p>
+        </div>
+      `;
     }
-
-    loadUnit("line");
   </script>
 </body>
 </html>
